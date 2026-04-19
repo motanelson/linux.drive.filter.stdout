@@ -1,81 +1,104 @@
 grammar py;
 
-// Ponto de entrada para o programa Python
-program : statement+ EOF ;
+program : statement* EOF ;
 
+// ==========================
+// Statements
+// ==========================
+
+statement
+    : varDecl
+    | assignment
+    | funcDecl
+    | ifStatement
+    | whileLoop
+    | forLoop
+    | printStatement
+    | returnStmt
+    | NEWLINE
+    ;
+
+// ==========================
 // Declarações
-statement : varDecl
-          | assignment
-          | funcDecl
-          | ifStatement
-          | whileLoop
-          | forLoop
-          | printStatement
-          | returnStmt
-          | NEWLINE
-          ;
+// ==========================
 
-// Declaração de variável (exemplo: "x = 10")
 varDecl : ID '=' expression NEWLINE ;
-
-// Atribuição de valor (exemplo: "x = 10")
 assignment : ID '=' expression NEWLINE ;
 
-// Declaração de função (exemplo: "def add(a, b): ...")
-funcDecl : 'def' ID '(' paramList? ')' ':' NEWLINE INDENT statement* DEDENT ;
+funcDecl : 'def' ID '(' paramList? ')' ':' block ;
 
-// Lista de parâmetros para função
 paramList : param (',' param)* ;
 param : ID ;
 
-// Estruturas de controle
-ifStatement : 'if' expression ':' NEWLINE INDENT statement* DEDENT ('elif' expression ':' NEWLINE INDENT statement* DEDENT)* ('else' ':' NEWLINE INDENT statement* DEDENT)? ;
-whileLoop : 'while' expression ':' NEWLINE INDENT statement* DEDENT ;
-forLoop : 'for' ID 'in' expression ':' NEWLINE INDENT statement* DEDENT ;
+// ==========================
+// Controle
+// ==========================
 
-// Instrução print (exemplo: "print(x)")
+ifStatement
+    : 'if' expression ':' block
+      ('elif' expression ':' block)*
+      ('else' ':' block)?
+    ;
+
+whileLoop : 'while' expression ':' block ;
+
+forLoop : 'for' ID 'in' expression ':' block ;
+
+// ==========================
+// Outros
+// ==========================
+
 printStatement : 'print' '(' expressionList ')' NEWLINE ;
-
-// Declaração de retorno (exemplo: "return x")
 returnStmt : 'return' expression? NEWLINE ;
 
+block : '{' statement* '}' ;
+
+// ==========================
 // Expressões
-expression : primary
-           | expression op=('*' | '/' | '+' | '-') expression
-           | expression op=('==' | '!=' | '<' | '>' | '<=' | '>=') expression
-           ;
+// ==========================
 
-// Expressões primárias
-primary : literal
-        | ID
-        | funcCall
-        | '(' expression ')'
-        ;
+expression : comparison ;
 
-// Chamada de função
+comparison
+    : addition (('==' | '!=' | '<' | '>' | '<=' | '>=') addition)*
+    ;
+
+addition
+    : multiplication (('+' | '-') multiplication)*
+    ;
+
+multiplication
+    : primary (('*' | '/') primary)*
+    ;
+
+primary
+    : literal
+    | ID
+    | funcCall
+    | '(' expression ')'
+    ;
+
 funcCall : ID '(' argList? ')' ;
 
-// Lista de argumentos para chamada de função
 argList : expression (',' expression)* ;
 
-// Lista de expressões para print
 expressionList : expression (',' expression)* ;
 
+// ==========================
 // Literais
+// ==========================
+
 literal : INT | FLOAT | STRING | BOOL ;
 
-// Tokens básicos
-ID : [a-zA-Z_][a-zA-Z0-9_]* ; // Identificadores
-INT : [0-9]+ ;                // Inteiros
-FLOAT : [0-9]+ '.' [0-9]+ ;   // Floats
-STRING : '"' (~["])* '"' ;    // Strings entre aspas duplas
-BOOL : 'True' | 'False' ;     // Booleanos
+// ==========================
+// Lexer
+// ==========================
 
-// Controle de indentação
-INDENT : '\t' ;               // Identação (simplesmente um caractere de tabulação)
-DEDENT : '\b' ;               // Dedent (para simplificação, usamos um caractere arbitrário)
-NEWLINE : '\r'? '\n' ;        // Nova linha
+ID : [a-zA-Z_][a-zA-Z0-9_]* ;
+INT : [0-9]+ ;
+FLOAT : [0-9]+ '.' [0-9]+ ;
+STRING : '"' (~["])* '"' ;
+BOOL : 'True' | 'False' ;
 
-// Ignora espaços em branco (exceto para indentação)
-WS : [ \r\n\t]+ -> skip ;
-
+NEWLINE : '\r'? '\n' ;
+WS : [ \t]+ -> skip ;

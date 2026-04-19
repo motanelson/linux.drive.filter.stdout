@@ -127,6 +127,16 @@ public interface pyListener extends ParseTreeListener {
 	 */
 	void exitReturnStmt(pyParser.ReturnStmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link pyParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlock(pyParser.BlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pyParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlock(pyParser.BlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link pyParser#expression}.
 	 * @param ctx the parse tree
 	 */
@@ -136,6 +146,36 @@ public interface pyListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(pyParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pyParser#comparison}.
+	 * @param ctx the parse tree
+	 */
+	void enterComparison(pyParser.ComparisonContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pyParser#comparison}.
+	 * @param ctx the parse tree
+	 */
+	void exitComparison(pyParser.ComparisonContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pyParser#addition}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddition(pyParser.AdditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pyParser#addition}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddition(pyParser.AdditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pyParser#multiplication}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiplication(pyParser.MultiplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pyParser#multiplication}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiplication(pyParser.MultiplicationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link pyParser#primary}.
 	 * @param ctx the parse tree
